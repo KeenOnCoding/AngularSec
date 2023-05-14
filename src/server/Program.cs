@@ -3,6 +3,8 @@ using AngularSec.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Duende.IdentityServer.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,11 +27,32 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+builder.Services.AddIdentityServer(o =>
+{
+    o.IssuerUri = "https://localhost:44489";
+})
+    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(opt =>
+    {
+        opt.Clients[0].ClientId = "AngularSec";
+        opt.Clients[0].RedirectUris = new List<string>
+        {
+                "https://localhost:44489/authentication/login-callback",
+        };
+        opt.Clients[0].PostLogoutRedirectUris = new List<string>
+        {
+            "https://localhost:44489/authentication/logout-callback"
+        };
+        opt.Clients[0].AllowedGrantTypes = GrantTypes.Code;
+        opt.Clients[0].AllowedScopes = new List<string>
+        {
+                "AngularSec",
+                "openId",
+                "profile"
+        };
+    });
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
