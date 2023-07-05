@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(config => {
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config => {
     //config.Password.RequireUppercase = true;
     //config.Password.RequireDigit = true;
     //config.Password.RequireNonAlphanumeric = true;
@@ -36,7 +36,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(config => {
     .AddDefaultTokenProviders();
 
 builder.Services.AddIdentityServer()
-    .AddAspNetIdentity<IdentityUser>()
+    .AddAspNetIdentity<ApplicationUser>()
     .AddInMemoryApiResources(Configuration.GetApis())
     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
     .AddInMemoryClients(Configuration.GetClients())
@@ -54,6 +54,7 @@ builder.Services.ConfigureApplicationCookie(config =>
 {
     config.Cookie.Name = "IdentityServer.Cookie";
     config.Cookie.HttpOnly = false;
+    //config.Cookie.SameSite = SameSiteMode.Lax;
     //config.LoginPath = "/Register/GetStarted";
     //config.LogoutPath = "/Auth/Logout";
     //config.SlidingExpiration = true;
@@ -94,7 +95,7 @@ app.MapControllerRoute(
 app.MapRazorPages();
 app.Run();
 public class ApplicationUser : IdentityUser { }
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
