@@ -3,6 +3,7 @@ using IdentityServer4;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 //var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -44,6 +45,40 @@ builder.Services.AddIdentityServer()
 //builder.Services.AddAuthentication()
 //               .AddJwtBearer();
 
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        options.ClientId = "117295608902-i7ibrso0s6v45cc7qlemcikqdkd3ualo.apps.googleusercontent.com";
+        options.ClientSecret = "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";
+    })
+    .AddGitHub(o =>
+    {
+        //  Add github:clientId and github:clientSecret to Project User Secrets
+        // dotnet user-secrets set github:clientId "557384cccfcf5e412237"
+        // dotnet user-secrets set github:clientSecret "ebb1d48446845f54c3bbbb98e6548cab10d6c709"
+
+
+        o.ClientId = "557384cccfcf5e412237";
+        o.ClientSecret = "ebb1d48446845f54c3bbbb98e6548cab10d6c709";
+        o.CallbackPath = "/signin-github";
+
+        // Grants access to read a user's profile data.
+        // https://docs.github.com/en/developers/apps/building-oauth-apps/scopes-for-oauth-apps
+        o.Scope.Add("read:user");
+
+        // Optional
+        // if you need an access token to call GitHub Apis
+        o.Events.OnCreatingTicket += context =>
+        {
+            if (context.AccessToken is { })
+            {
+                context.Identity?.AddClaim(new Claim("access_token", context.AccessToken));
+            }
+
+            return Task.CompletedTask;
+        };
+    });
+
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
                       builder => builder.WithOrigins("http://localhost:4200")
@@ -52,6 +87,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.ConfigureApplicationCookie(config =>
 {
+
     config.Cookie.Name = "IdentityServer.Cookie";
     config.Cookie.HttpOnly = false;
     //config.Cookie.SameSite = SameSiteMode.Lax;
@@ -60,7 +96,12 @@ builder.Services.ConfigureApplicationCookie(config =>
     //config.SlidingExpiration = true;
     // config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
-
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -72,6 +113,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.UseCookiePolicy();
 app.UseIdentityServer();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -156,4 +198,17 @@ public static class Configuration
                     RequireConsent = false,
                 }
         };
+}
+public static class ClaimsExtensions
+{
+    public static string? FirstClaim(this IEnumerable<Claim>? claims, string type)
+    {
+        return claims?
+            .Where(c => c.Type == type)
+            .Select(c => c.Value)
+            .FirstOrDefault();
+    }
+
+    public static string? AccessToken(this ClaimsPrincipal principal) =>
+        principal.Claims.FirstClaim("access_token");
 }
