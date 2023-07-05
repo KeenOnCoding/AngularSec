@@ -1,4 +1,4 @@
-namespace AngularSec.Models
+namespace TestWebMvc.Models
 {
     public class ErrorViewModel
     {

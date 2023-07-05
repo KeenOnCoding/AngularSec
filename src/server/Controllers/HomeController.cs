@@ -1,8 +1,8 @@
-﻿using AngularSec.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using TestWebMvc.Models;
 
-namespace AngularSec.Controllers
+namespace TestWebMvc.Controllers
 {
     public class HomeController : Controller
     {
