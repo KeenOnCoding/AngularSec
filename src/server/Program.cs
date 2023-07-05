@@ -55,8 +55,8 @@ builder.Services.ConfigureApplicationCookie(config =>
     config.Cookie.Name = "IdentityServer.Cookie";
     config.Cookie.HttpOnly = false;
     //config.Cookie.SameSite = SameSiteMode.Lax;
-    //config.LoginPath = "/Register/GetStarted";
-    //config.LogoutPath = "/Auth/Logout";
+    config.LoginPath = "/Identity/Account/Login";
+    config.LogoutPath = "/Identity/Account/Logout";
     //config.SlidingExpiration = true;
     // config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 });
