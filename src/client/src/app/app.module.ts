@@ -1,3 +1,4 @@
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
@@ -6,6 +7,7 @@ import { filter } from 'rxjs/operators';
 import { AppComponent } from './app.component';
 import { AuthConfigModule } from './auth-config.module';
 import { HomeComponent } from './home/home.component';
+import { AuthorizeInterceptor } from './services/authorize-interceptor.service';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 @NgModule({
@@ -20,7 +22,9 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     ]),
     AuthConfigModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
