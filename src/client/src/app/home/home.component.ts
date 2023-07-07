@@ -1,3 +1,4 @@
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   AuthenticatedResult,
@@ -7,7 +8,12 @@ import {
 } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { AuthorizeService } from '../services/authorize-service.service';
-
+interface WeatherForecast {
+  date: string;
+  temperatureC: number;
+  temperatureF: number;
+  summary: string;
+}
 @Component({
   selector: 'app-home',
   templateUrl: 'home.component.html',
@@ -21,16 +27,30 @@ export class HomeComponent implements OnInit {
 
   isAuthenticated$: Observable<AuthenticatedResult>;
 
+  public forecasts: WeatherForecast[] = [];
 
-  constructor(public authorize: AuthorizeService) { }
+  constructor(private http: HttpClient, public authorize: AuthorizeService) { }
 
   ngOnInit(): void {
     this.configurations = this.authorize.configurations;
     this.userData$ = this.authorize.userData$;
     this.isAuthenticated$ = this.authorize.isAuthenticated$;
+
   }
 
-
+  getData() {
+    //this.http.get<any>("https://localhost:44305/" + 'weatherforecast')
+    //.subscribe(result => { console.log('RESULT   ' + result); }, error => console.error(error));
+    this.http.request(
+      new HttpRequest<WeatherForecast[]>('GET',
+        "https://localhost:44305/" + 'weatherforecast',
+        null,
+        { responseType: 'json', }))
+      .subscribe(result =>
+      { console.log(result) },
+        error => console.error(error));
+    console.log(this.forecasts);
+  }
 
   login(configId: string) {
     this.authorize.login(configId);

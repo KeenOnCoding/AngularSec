@@ -2,7 +2,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { EventTypes, PublicEventsService } from 'angular-auth-oidc-client';
+import { AuthInterceptor, EventTypes, PublicEventsService } from 'angular-auth-oidc-client';
 import { filter } from 'rxjs/operators';
 import { AppComponent } from './app.component';
 import { AuthConfigModule } from './auth-config.module';
@@ -23,7 +23,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
     AuthConfigModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

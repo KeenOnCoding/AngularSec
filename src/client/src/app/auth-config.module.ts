@@ -14,6 +14,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
           responseType: 'code',
           silentRenew: true,
           useRefreshToken: true,
+          secureRoutes: ['https://localhost:44305/'],
           logLevel: LogLevel.Debug
         },
         {

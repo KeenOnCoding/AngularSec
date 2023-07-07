@@ -42,10 +42,17 @@ builder.Services.AddIdentityServer()
     .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
     .AddInMemoryClients(Configuration.GetClients())
     .AddDeveloperSigningCredential();
-//builder.Services.AddAuthentication()
-//               .AddJwtBearer();
+
 
 builder.Services.AddAuthentication()
+    .AddJwtBearer()
+    //.AddJwtBearer("Bearer", config =>
+    //{
+    //    config.Authority = authUrl;
+    //    config.Audience = "AcaServicesApi";
+    //    config.RequireHttpsMetadata = false;
+    //});
+    //.AddIdentityServerJwt();
     .AddGoogle(options =>
     {
         options.ClientId = "117295608902-i7ibrso0s6v45cc7qlemcikqdkd3ualo.apps.googleusercontent.com";
@@ -113,10 +120,12 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-app.UseCookiePolicy();
-app.UseIdentityServer();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRouting();
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseCookiePolicy(new CookiePolicyOptions()
@@ -124,10 +133,14 @@ if (app.Environment.IsDevelopment())
         MinimumSameSitePolicy = SameSiteMode.Lax
     });
 }
-app.UseCors("AllowAll");  
-app.UseRouting();
+//app.UseCookiePolicy();
+app.UseCors("AllowAll"); 
 
+
+app.UseAuthentication();
+app.UseIdentityServer();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
