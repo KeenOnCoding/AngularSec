@@ -7,14 +7,18 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
       config: [
         {
           authority: 'https://localhost:44305',
+          
           redirectUrl: window.location.origin,
           postLogoutRedirectUri: window.location.origin,
           clientId: 'FreeFile-FE',
-          scope: 'openid profile',
+          scope: 'openid profile vacancy',
           responseType: 'code',
           silentRenew: true,
           useRefreshToken: true,
-          secureRoutes: ['https://localhost:44305/'],
+          secureRoutes: ['https://localhost:44305/','https://localhost:7129/'],
+          customParamsAuthRequest: {
+            audience: 'https://localhost:7129/',
+          },
           logLevel: LogLevel.Debug
         },
         {
@@ -27,6 +31,7 @@ import { AuthModule, LogLevel } from 'angular-auth-oidc-client';
           silentRenew: true,
           useRefreshToken: true,
           logLevel: LogLevel.Debug,
+          
           customParamsAuthRequest: {
             audience: 'https://auth0-api-spa',
           },

@@ -6,7 +6,7 @@ import {
   OpenIdConfiguration,
   UserDataResult,
 } from 'angular-auth-oidc-client';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { AuthorizeService } from '../services/authorize-service.service';
 interface WeatherForecast {
   date: string;
@@ -35,21 +35,17 @@ export class HomeComponent implements OnInit {
     this.configurations = this.authorize.configurations;
     this.userData$ = this.authorize.userData$;
     this.isAuthenticated$ = this.authorize.isAuthenticated$;
-
+    this.http
+      .get("https://localhost:7129/" + 'weatherforecast')
+      .pipe(catchError((error) => of(error)))
+      .subscribe(data => console.log(data));
   }
+  
 
   getData() {
     //this.http.get<any>("https://localhost:44305/" + 'weatherforecast')
     //.subscribe(result => { console.log('RESULT   ' + result); }, error => console.error(error));
-    this.http.request(
-      new HttpRequest<WeatherForecast[]>('GET',
-        "https://localhost:44305/" + 'weatherforecast',
-        null,
-        { responseType: 'json', }))
-      .subscribe(result =>
-      { console.log(result) },
-        error => console.error(error));
-    console.log(this.forecasts);
+    //this.http.request(new HttpRequest<WeatherForecast[]>('GET',"https://localhost:44305/" + 'weatherforecast',null,{ responseType: 'json', })).subscribe(result =>{ console.log(result) },error => console.error(error));console.log(this.forecasts);
   }
 
   login(configId: string) {
