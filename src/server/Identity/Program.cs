@@ -17,22 +17,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config => {
-    //config.Password.RequireUppercase = true;
-    //config.Password.RequireDigit = true;
-    //config.Password.RequireNonAlphanumeric = true;
-    //config.Password.RequiredLength = 6;
-    //config.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
+    /*
 
-    //// Lockout settings
-    //config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    //config.Lockout.MaxFailedAccessAttempts = 3;
-    //config.Lockout.AllowedForNewUsers = true;
+     config.Password.RequireUppercase = true;
+     config.Password.RequireDigit = true;
+     config.Password.RequireNonAlphanumeric = true;
+     config.Password.RequiredLength = 6;
+     config.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
 
-    //// User settings
-    //config.User.RequireUniqueEmail = true;
-    //config.SignIn.RequireConfirmedAccount = false;
-    //config.SignIn.RequireConfirmedEmail = true;
-    //config.SignIn.RequireConfirmedPhoneNumber = false;
+     //// Lockout settings
+     config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+     config.Lockout.MaxFailedAccessAttempts = 3;
+     config.Lockout.AllowedForNewUsers = true;
+
+     //// User settings
+     config.user.requireuniqueemail = true;
+     config.signin.requireconfirmedaccount = false;
+     config.signin.requireconfirmedemail = true;
+     config.signin.requireconfirmedphonenumber = false;
+    */
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
